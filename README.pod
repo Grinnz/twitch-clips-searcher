@@ -2,7 +2,7 @@
 
 =encoding UTF-8
 
-=head1 Twitch Clips Search
+=head1 Twitch Clips Searcher
 
 =head1 Copyright and License
 

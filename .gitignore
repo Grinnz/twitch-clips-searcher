@@ -16,7 +16,5 @@ nytprof.out
 *.o
 *.bs
 /_eumm/
-/twitch-clips-search-*
-/twitch-clips-search.conf
-/log/*
+/twitch-clips-searcher.conf
 /hypnotoad.pid
