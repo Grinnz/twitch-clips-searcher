@@ -1,0 +1,13 @@
+=pod
+
+=encoding UTF-8
+
+=head1 Twitch Clips Search
+
+=head1 Copyright and License
+
+This software is Copyright (c) 2022 by Dan Book.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0 (GPL Compatible)
