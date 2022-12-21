@@ -60,7 +60,7 @@
         </thead>
         <tbody>
           <tr v-for="clip in clips_page">
-            <td><a target="_blank" v-bind:href="clip.url">{{ clip.title }}<br><img v-bind:src="clip.thumbnail_url"></a></td>
+            <td><a target="_blank" v-bind:href="clip.url">{{ clip.title }}<br><img height=180 v-bind:src="clip.thumbnail_url"></a></td>
             <td>{{ clip.view_count }}</td>
             <td><a target="_blank" v-bind:href="'https://www.twitch.tv/directory/game/' + encodeURIComponent(clip.game)">{{ clip.game }}</a></td>
             <td><a target="_blank" v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clip.creator_name)">{{ clip.creator_name }}</a></td>
