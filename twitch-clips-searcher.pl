@@ -64,12 +64,32 @@ helper api_request => sub ($c, $method, $endpoint, $url_params = undef, $body_js
   });
 };
 
+my %games_by_id;
 helper get_user_clips => sub ($c, $broadcaster_id, $started_at = undef, $ended_at = undef, $cursor = undef) {
   my %params = (broadcaster_id => $broadcaster_id, first => 100);
   $params{after} = $cursor if defined $cursor;
   $params{started_at} = $started_at if defined $started_at;
   $params{ended_at} = $ended_at if defined $ended_at;
   $c->api_request(GET => 'clips', \%params)->then(sub ($response) {
+    my %games_to_fetch;
+    foreach my $clip (@{$response->{data} // []}) {
+      next unless defined $clip->{game_id};
+      if (exists $games_by_id{$clip->{game_id}}) {
+        $clip->{game} = $games_by_id{$clip->{game_id}};
+      } else {
+        $games_to_fetch{$clip->{game_id}} = 1;
+      }
+    }
+    if (keys %games_to_fetch) {
+      return $c->get_games_by_id([keys %games_to_fetch])->then(sub ($games) {
+        $games_by_id{$_} = $games->{$_}{name} for keys %$games;
+        $_->{game} //= $games_by_id{$_->{game_id}} for grep {defined $_->{game_id}} @{$response->{data} // []};
+        return $response;
+      });
+    } else {
+      return Mojo::Promise->resolve($response);
+    }
+  })->then(sub ($response) {
     my $next_cursor = $response->{pagination}{cursor};
     if (defined $next_cursor) {
       $c->get_user_clips($broadcaster_id, $started_at, $ended_at, $next_cursor)->then(sub ($next_clips) {
@@ -118,12 +138,7 @@ get '/api/clips/:username' => {username => ''} => sub ($c) {
   $c->get_users_by_name([$username])->then(sub ($users) {
     my $user = $users->{lc $username} // die "User not found\n";
     $c->get_user_clips($user->{id}, $started_at, $ended_at)->then(sub ($clips) {
-      my @game_ids = uniqstr grep { defined } map { $_->{game_id} } @$clips;
-      return $c->render(json => {username => $user->{display_name}, clips => $clips}) unless @game_ids;
-      $c->get_games_by_id(\@game_ids)->then(sub ($games) {
-        $_->{game} = $games->{$_->{game_id}}{name} for @$clips;
-        $c->render(json => {username => $user->{display_name}, clips => $clips});
-      });
+      return $c->render(json => {username => $user->{display_name}, clips => $clips});
     });
   })->catch(sub ($error) {
     chomp $error;
