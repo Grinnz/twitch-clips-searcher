@@ -64,13 +64,20 @@ helper api_request => sub ($c, $method, $endpoint, $url_params = undef, $body_js
   });
 };
 
-helper get_user_clips => sub ($c, $broadcaster_id, $cursor = undef, $started_at = undef, $ended_at = undef) {
+helper get_user_clips => sub ($c, $broadcaster_id, $started_at = undef, $ended_at = undef, $cursor = undef) {
   my %params = (broadcaster_id => $broadcaster_id, first => 100);
   $params{after} = $cursor if defined $cursor;
   $params{started_at} = $started_at if defined $started_at;
   $params{ended_at} = $ended_at if defined $ended_at;
   $c->api_request(GET => 'clips', \%params)->then(sub ($response) {
-    return $response // {};
+    my $next_cursor = $response->{pagination}{cursor};
+    if (defined $next_cursor) {
+      $c->get_user_clips($broadcaster_id, $started_at, $ended_at, $next_cursor)->then(sub ($next_clips) {
+        return [@{$response->{data} // []}, @$next_clips];
+      });
+    } else {
+      return $response->{data} // [];
+    }
   });
 };
 
@@ -110,8 +117,7 @@ get '/api/clips/:username' => {username => ''} => sub ($c) {
   $ended_at = Time::Moment->now_utc->to_string if defined $started_at and !defined $ended_at;
   $c->get_users_by_name([$username])->then(sub ($users) {
     my $user = $users->{lc $username} // die "User not found\n";
-    $c->get_user_clips($user->{id}, undef, $started_at, $ended_at)->then(sub ($response) {
-      my $clips = $response->{data} // [];
+    $c->get_user_clips($user->{id}, $started_at, $ended_at)->then(sub ($clips) {
       my @game_ids = uniqstr grep { defined } map { $_->{game_id} } @$clips;
       return $c->render(json => {username => $user->{display_name}, clips => $clips}) unless @game_ids;
       $c->get_games_by_id(\@game_ids)->then(sub ($games) {

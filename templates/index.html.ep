@@ -32,7 +32,10 @@
         </div>
       </div>
       <div class="col-12">
-        <button type="submit" class="btn btn-primary">Fetch Clips</button>
+        <button type="submit" class="btn btn-primary" v-bind:disabled="fetching_clips">Fetch Clips</button>
+      </div>
+      <div v-if="fetching_clips" class="col-12">
+        <span class="form-text">Please wait...</span>
       </div>
       <div v-if="search_error" class="col-12">
         <span class="form-text">{{ search_error }}</span>

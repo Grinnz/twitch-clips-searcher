@@ -9,6 +9,7 @@ createApp({
       start_date: null,
       end_date: null,
       search_error: null,
+      fetching_clips: false,
       page_size: 100,
       clips: null,
       current_page: 1,
@@ -40,9 +41,6 @@ createApp({
   methods: {
     fetch_clips() {
       this.search_error = null;
-      this.clips = null;
-      this.clips_user = null;
-      this.current_page = 1;
       let url_params = new URLSearchParams();
       if (this.start_date !== null && this.start_date !== '') {
         let start = Date.parse(this.start_date);
@@ -63,10 +61,12 @@ createApp({
         }
       }
       if (this.username === null) { this.username = ''; }
+      this.fetching_clips = true;
       fetch('/api/clips/' + encodeURIComponent(this.username) + '?' + url_params.toString())
         .then((response) => {
           if (response.ok) {
             return response.json().then((data) => {
+              this.current_page = 1;
               this.clips = data.clips;
               this.clips_user = data.username;
             });
@@ -81,7 +81,7 @@ createApp({
         }).catch((error) => {
           this.search_error = 'Internal error';
           console.log(error);
-        });
+        }).finally(() => { this.fetching_clips = false; });
     }
   }
 }).mount('#app');
