@@ -50,7 +50,7 @@
         </ul>
       </nav>
       <table class="table caption-top">
-        <caption>Retrieved {{ clips.length }} clips for <a v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clips_user)">{{ clips_user }}</a></caption>
+        <caption>Retrieved {{ clips.length }} clips for <a target="_blank" v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clips_user)">{{ clips_user }}</a></caption>
         <thead>
           <th scope="col">Clip</th>
           <th scope="col">Views</thj>
@@ -60,10 +60,10 @@
         </thead>
         <tbody>
           <tr v-for="clip in clips_page">
-            <td><a v-bind:href="clip.url">{{ clip.title }}<br><img v-bind:src="clip.thumbnail_url"></a></td>
+            <td><a target="_blank" v-bind:href="clip.url">{{ clip.title }}<br><img v-bind:src="clip.thumbnail_url"></a></td>
             <td>{{ clip.view_count }}</td>
-            <td><a v-bind:href="'https://www.twitch.tv/directory/game/' + encodeURIComponent(clip.game)">{{ clip.game }}</a></td>
-            <td><a v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clip.creator_name)">{{ clip.creator_name }}</a></td>
+            <td><a target="_blank" v-bind:href="'https://www.twitch.tv/directory/game/' + encodeURIComponent(clip.game)">{{ clip.game }}</a></td>
+            <td><a target="_blank" v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clip.creator_name)">{{ clip.creator_name }}</a></td>
             <td>{{ new Date(clip.created_at).toLocaleString() }}</td>
           </tr>
         </tbody>
