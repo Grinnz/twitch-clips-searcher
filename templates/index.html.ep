@@ -9,33 +9,63 @@
 <body>
   <div id="app" class="container-fluid">
     <h1>Twitch Clips Searcher</h1>
-    <form v-on:submit.prevent="fetch_clips" class="row row-cols-lg-auto g-3 align-items-center">
+    <form v-on:submit.prevent="fetch_clips" class="row row-cols-lg-auto g-3 align-items-center mb-3">
       <div class="col-12">
         <label class="visually-hidden" for="search-username">Username</label>
-        <input v-model="username" type="text" id="search-username" class="form-control" placeholder="Username" name="username">
+        <div class="input-group">
+          <div class="input-group-text">@</div>
+          <input v-model="username" type="text" id="search-username" class="form-control" placeholder="Username" name="username">
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="visually-hidden" for="search-start-date">Start Date</label>
+        <div class="input-group">
+          <div class="input-group-text">Start Date</div>
+          <input v-model="start_date" type="datetime-local" id="search-start-date" class="form-control" placeholder="Start Date" name="start_date">
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="visually-hidden" for="search-end-date">End Date</label>
+        <div class="input-group">
+          <div class="input-group-text">End Date</div>
+          <input v-model="end_date" type="datetime-local" id="search-end-date" class="form-control" placeholder="End Date" name="end_date">
+        </div>
       </div>
       <div class="col-12">
         <button type="submit" class="btn btn-primary">Fetch Clips</button>
       </div>
+      <div v-if="search_error" class="col-12">
+        <span class="form-text">{{ search_error }}</span>
+      </div>
     </form>
-    <table class="table">
-      <thead>
-        <th scope="col">Clip</th>
-        <th scope="col">Views</thj>
-        <th scope="col">Category</th>
-        <th scope="col">Clipper</th>
-        <th scope="col">Date</th>
-      </thead>
-      <tbody>
-        <tr v-for="clip in clips">
-          <td><a v-bind:href="clip.url">{{ clip.title }}<br><img v-bind:src="clip.thumbnail_url"></a></td>
-          <td>{{ clip.view_count }}</td>
-          <td><a v-bind:href="'https://www.twitch.tv/directory/game/' + encodeURIComponent(clip.game)">{{ clip.game }}</a></td>
-          <td><a v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clip.creator_name)">{{ clip.creator_name }}</a></td>
-          <td>{{ new Date(clip.created_at).toLocaleString() }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <template v-if="clips">
+      <nav v-if="page_nums.length > 1" aria-label="Clip page navigation">
+        <ul class="pagination">
+          <li class="page-item"><a v-on:click.prevent="if (current_page > 1) { current_page--; }" v-bind:class="pagination_prev_class" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+          <li v-for="num in page_nums" class="page-item"><a v-on:click.prevent="current_page = num" v-bind:class="{ 'page-link': true, active: num === current_page }" href="#">{{ num }}</a></li>
+          <li class="page-item"><a v-on:click.prevent="if (current_page < page_nums.length) { current_page++; }" v-bind:class="pagination_next_class" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+        </ul>
+      </nav>
+      <table class="table caption-top">
+        <caption>Retrieved {{ clips.length }} clips for <a v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clips_user)">{{ clips_user }}</a></caption>
+        <thead>
+          <th scope="col">Clip</th>
+          <th scope="col">Views</thj>
+          <th scope="col">Category</th>
+          <th scope="col">Clipper</th>
+          <th scope="col">Date</th>
+        </thead>
+        <tbody>
+          <tr v-for="clip in clips_page">
+            <td><a v-bind:href="clip.url">{{ clip.title }}<br><img v-bind:src="clip.thumbnail_url"></a></td>
+            <td>{{ clip.view_count }}</td>
+            <td><a v-bind:href="'https://www.twitch.tv/directory/game/' + encodeURIComponent(clip.game)">{{ clip.game }}</a></td>
+            <td><a v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clip.creator_name)">{{ clip.creator_name }}</a></td>
+            <td>{{ new Date(clip.created_at).toLocaleString() }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </template>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.45/vue.global.min.js" integrity="sha512-Pdnl+dKWHA0jEnmhogUHlOw3FqDeujiEc3XQDkvMrPUAvytiU2cZiknw2xDPgDS+u2prg2n+6eKz3CPG588gTQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="/search.js"></script>

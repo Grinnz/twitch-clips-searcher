@@ -6,6 +6,7 @@ use List::Util 1.45 'uniqstr';
 use Mojo::Promise;
 use Mojo::URL;
 use Mojo::UserAgent;
+use Time::Moment;
 
 plugin 'Config';
 app->secrets(app->config->{secrets}) if defined app->config->{secrets};
@@ -63,9 +64,11 @@ helper api_request => sub ($c, $method, $endpoint, $url_params = undef, $body_js
   });
 };
 
-helper get_user_clips => sub ($c, $broadcaster_id, $cursor = undef) {
+helper get_user_clips => sub ($c, $broadcaster_id, $cursor = undef, $started_at = undef, $ended_at = undef) {
   my %params = (broadcaster_id => $broadcaster_id, first => 100);
   $params{after} = $cursor if defined $cursor;
+  $params{started_at} = $started_at if defined $started_at;
+  $params{ended_at} = $ended_at if defined $ended_at;
   $c->api_request(GET => 'clips', \%params)->then(sub ($response) {
     return $response // {};
   });
@@ -97,19 +100,28 @@ helper get_games_by_id => sub ($c, $ids) {
 
 get '/api/clips/:username' => {username => ''} => sub ($c) {
   my $username = $c->param('username');
-  return $c->render(json => {error => 'No user specified'}) unless length $username;
+  return $c->render(status => 400, json => {error => 'No user specified'}) unless length $username;
+  return $c->render(status => 400, json => {error => 'Invalid username'}) unless $username =~ m/\A[a-zA-Z0-9][a-zA-Z0-9_]*\z/;
+  my $start_ts = $c->req->param('start_ts');
+  my $started_at = length $start_ts ? Time::Moment->from_epoch($start_ts)->to_string : undef;
+  my $end_ts = $c->req->param('end_ts');
+  my $ended_at = length $end_ts ? Time::Moment->from_epoch($end_ts)->to_string : undef;
+  $started_at = Time::Moment->from_epoch(0)->to_string if defined $ended_at and !defined $started_at;
+  $ended_at = Time::Moment->now_utc->to_string if defined $started_at and !defined $ended_at;
   $c->get_users_by_name([$username])->then(sub ($users) {
-    my $user = $users->{lc $username} // die "Unknown user $username\n";
-    $c->get_user_clips($user->{id})->then(sub ($response) {
+    my $user = $users->{lc $username} // die "User not found\n";
+    $c->get_user_clips($user->{id}, undef, $started_at, $ended_at)->then(sub ($response) {
       my $clips = $response->{data} // [];
-      my @game_ids = uniqstr map { $_->{game_id} } @$clips;
+      my @game_ids = uniqstr grep { defined } map { $_->{game_id} } @$clips;
+      return $c->render(json => {username => $user->{display_name}, clips => $clips}) unless @game_ids;
       $c->get_games_by_id(\@game_ids)->then(sub ($games) {
         $_->{game} = $games->{$_->{game_id}}{name} for @$clips;
-        $c->render(json => {clips => $clips});
+        $c->render(json => {username => $user->{display_name}, clips => $clips});
       });
     });
   })->catch(sub ($error) {
-    $c->render(json => {error => $error});
+    chomp $error;
+    $c->render(status => 500, json => {error => $error});
   });
 };
 
