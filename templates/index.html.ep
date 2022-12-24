@@ -58,14 +58,14 @@
         </div>
         <div class="col-12">
           <select v-model="clips_filter_category" class="form-select" aria-label="Category">
-            <option value="">Any Category</option>
-            <option v-for="category in clip_categories" v-bind:value="category">{{ category }}</option>
+            <option value="any">Any Category</option>
+            <option v-for="category in clip_categories" v-bind:value="category.id">{{ category.name }}</option>
           </select>
         </div>
         <div class="col-12">
           <select v-model="clips_filter_clipper" class="form-select" aria-label="Clipper">
-            <option value="">Any Clipper</option>
-            <option v-for="user in clip_clippers" v-bind:value="user">{{ user }}</option>
+            <option value="any">Any Clipper</option>
+            <option v-for="user in clip_clippers" v-bind:value="user.id">{{ user.name }}</option>
           </select>
         </div>
       </form>

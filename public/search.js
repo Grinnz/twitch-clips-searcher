@@ -17,8 +17,8 @@ createApp({
       title_search: null,
       views_min: null,
       views_max: null,
-      clips_filter_category: "",
-      clips_filter_clipper: "",
+      clips_filter_category: "any",
+      clips_filter_clipper: "any",
     }
   },
   computed: {
@@ -26,11 +26,11 @@ createApp({
       this.current_page = 1;
       if (this.clips === null) { return []; }
       let filtered = this.clips;
-      if (this.clips_filter_category !== null && this.clips_filter_category !== "") {
-        filtered = filtered.filter(clip => this.clips_filter_category === clip.game);
+      if (this.clips_filter_category !== null && this.clips_filter_category !== "any") {
+        filtered = filtered.filter(clip => this.clips_filter_category === clip.game_id);
       }
-      if (this.clips_filter_clipper !== null && this.clips_filter_clipper !== "") {
-        filtered = filtered.filter(clip => this.clips_filter_clipper === clip.creator_name);
+      if (this.clips_filter_clipper !== null && this.clips_filter_clipper !== "any") {
+        filtered = filtered.filter(clip => this.clips_filter_clipper === clip.creator_id);
       }
       if ((this.views_min !== null && this.views_min !== "") || (this.views_max !== null && this.views_max !== "")) {
         let min = this.views_min === "" ? null : this.views_min;
@@ -48,14 +48,18 @@ createApp({
     },
     clip_categories() {
       if (this.clips === null) { return []; }
-      return [...new Set(this.clips.map(clip => clip.game))].sort();
+      let categories = {};
+      this.clips.forEach((clip) => { let id = clip.game_id === null ? '' : clip.game_id; categories[id] = clip.game === null ? '' : clip.game; });
+      return Object.keys(categories).map((game_id) => ({ id: game_id, name: categories[game_id] })).sort((a, b) => a.name.localeCompare(b.name));
     },
     clip_clippers() {
       if (this.clips === null) { return []; }
-      return [...new Set(this.clips.map(clip => clip.creator_name))].sort();
+      let clippers = {};
+      this.clips.forEach((clip) => { let id = clip.creator_id === null ? '' : clip.creator_id; clippers[id] = clip.creator_name === null ? '' : clip.creator_name; });
+      return Object.keys(clippers).map((creator_id) => ({ id: creator_id, name: clippers[creator_id] })).sort((a, b) => a.name.localeCompare(b.name));
     },
     page_nums() {
-      if (this.clips === null) { return []; }
+      if (this.clips === null || this.clips_filtered.length < 1) { return []; }
       let last_page = Math.floor((this.clips_filtered.length - 1) / this.page_size) + 1;
       let pages = [];
       let page = this.current_page < 5 ? 1 : this.current_page > last_page - 5 ? last_page - 9 : this.current_page - 5;
@@ -130,8 +134,8 @@ createApp({
       this.title_search = null;
       this.views_min = null;
       this.views_max = null;
-      this.clips_filter_category = "";
-      this.clips_filter_clipper = "";
+      this.clips_filter_category = "any";
+      this.clips_filter_clipper = "any";
       this.clips = clips;
     },
   }
