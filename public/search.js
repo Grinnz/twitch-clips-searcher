@@ -23,6 +23,7 @@ createApp({
   },
   computed: {
     clips_filtered() {
+      this.current_page = 1;
       if (this.clips === null) { return []; }
       let filtered = this.clips;
       if (this.clips_filter_category !== null && this.clips_filter_category !== "") {
@@ -55,7 +56,17 @@ createApp({
     },
     page_nums() {
       if (this.clips === null) { return []; }
-      return Array.from(new Array(Math.floor((this.clips_filtered.length - 1) / this.page_size) + 1), (x, i) => i + 1);
+      let last_page = Math.floor((this.clips_filtered.length - 1) / this.page_size) + 1;
+      let pages = [];
+      let page = this.current_page < 5 ? 1 : this.current_page > last_page - 5 ? last_page - 9 : this.current_page - 5;
+      if (page < 1) { page = 1; }
+      while ((page < this.current_page + 5 || pages.length < 10) && page <= last_page) {
+        pages.push(page);
+        page++;
+      }
+      if (pages[0] !== 1) { pages.unshift(1); }
+      if (pages[pages.length - 1] !== last_page) { pages.push(last_page); }
+      return pages;
     },
     pagination_prev_class() {
       return {
@@ -66,7 +77,7 @@ createApp({
     pagination_next_class() {
       return {
         'page-link': true,
-        disabled: this.current_page >= this.page_nums.length,
+        disabled: this.current_page >= this.page_nums[this.page_nums.length - 1],
       }
     },
   },
