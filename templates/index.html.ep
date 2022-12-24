@@ -57,13 +57,13 @@
           <input v-model="views_max" type="number" id="filter-views-max" class="form-control" placeholder="Max Views" name="views_max">
         </div>
         <div class="col-12">
-          <select v-model="clips_filter_category" class="form-select" aria-label="Category">
+          <select v-model="filter_category" class="form-select" aria-label="Category">
             <option value="any">Any Category</option>
             <option v-for="category in clip_categories" v-bind:value="category.id">{{ category.name }}</option>
           </select>
         </div>
         <div class="col-12">
-          <select v-model="clips_filter_clipper" class="form-select" aria-label="Clipper">
+          <select v-model="filter_clipper" class="form-select" aria-label="Clipper">
             <option value="any">Any Clipper</option>
             <option v-for="user in clip_clippers" v-bind:value="user.id">{{ user.name }}</option>
           </select>

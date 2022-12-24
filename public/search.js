@@ -17,8 +17,8 @@ createApp({
       title_search: null,
       views_min: null,
       views_max: null,
-      clips_filter_category: "any",
-      clips_filter_clipper: "any",
+      filter_category: "any",
+      filter_clipper: "any",
     }
   },
   computed: {
@@ -26,11 +26,11 @@ createApp({
       this.current_page = 1;
       if (this.clips === null) { return []; }
       let filtered = this.clips;
-      if (this.clips_filter_category !== null && this.clips_filter_category !== "any") {
-        filtered = filtered.filter(clip => this.clips_filter_category === clip.game_id);
+      if (this.filter_category !== null && this.filter_category !== "any") {
+        filtered = filtered.filter(clip => this.filter_category === clip.game_id);
       }
-      if (this.clips_filter_clipper !== null && this.clips_filter_clipper !== "any") {
-        filtered = filtered.filter(clip => this.clips_filter_clipper === clip.creator_id);
+      if (this.filter_clipper !== null && this.filter_clipper !== "any") {
+        filtered = filtered.filter(clip => this.filter_clipper === clip.creator_id);
       }
       if ((this.views_min !== null && this.views_min !== "") || (this.views_max !== null && this.views_max !== "")) {
         let min = this.views_min === "" ? null : this.views_min;
@@ -134,8 +134,8 @@ createApp({
       this.title_search = null;
       this.views_min = null;
       this.views_max = null;
-      this.clips_filter_category = "any";
-      this.clips_filter_clipper = "any";
+      this.filter_category = "any";
+      this.filter_clipper = "any";
       this.clips = clips;
     },
   }
