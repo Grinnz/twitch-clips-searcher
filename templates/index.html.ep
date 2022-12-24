@@ -42,15 +42,41 @@
       </div>
     </form>
     <template v-if="clips">
+      <p>Showing {{ clips_filtered.length }} of {{ clips.length }} clips fetched for <a target="_blank" v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clips_user)">{{ clips_user }}</a></p>
+      <form v-on:submit.prevent class="row row-cols-lg-auto g-3 align-items-center mb-3">
+        <div class="col-12">
+          <label class="visually-hidden" for="filter-title">Title</label>
+          <input v-model="title_search" type="text" id="filter-title" class="form-control" placeholder="Search Titles" name="title_search">
+        </div>
+        <div class="col-12">
+          <label class="visually-hidden" for="filter-views-min">Min Views</label>
+          <input v-model="views_min" type="number" id="filter-views-min" class="form-control" placeholder="Min Views" name="views_min">
+        </div>
+        <div class="col-12">
+          <label class="visually-hidden" for="filter-views-max">Max Views</label>
+          <input v-model="views_max" type="number" id="filter-views-max" class="form-control" placeholder="Max Views" name="views_max">
+        </div>
+        <div class="col-12">
+          <select v-model="clips_filter_category" class="form-select" aria-label="Category">
+            <option value="">Any Category</option>
+            <option v-for="category in clip_categories" v-bind:value="category">{{ category }}</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <select v-model="clips_filter_clipper" class="form-select" aria-label="Clipper">
+            <option value="">Any Clipper</option>
+            <option v-for="user in clip_clippers" v-bind:value="user">{{ user }}</option>
+          </select>
+        </div>
+      </form>
       <nav v-if="page_nums.length > 1" aria-label="Clip page navigation">
-        <ul class="pagination">
+        <ul class="pagination justify-content-center">
           <li class="page-item"><a v-on:click.prevent="if (current_page > 1) { current_page--; }" v-bind:class="pagination_prev_class" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
           <li v-for="num in page_nums" class="page-item"><a v-on:click.prevent="current_page = num" v-bind:class="{ 'page-link': true, active: num === current_page }" href="#">{{ num }}</a></li>
           <li class="page-item"><a v-on:click.prevent="if (current_page < page_nums.length) { current_page++; }" v-bind:class="pagination_next_class" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
         </ul>
       </nav>
-      <table class="table caption-top">
-        <caption>Retrieved {{ clips.length }} clips for <a target="_blank" v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clips_user)">{{ clips_user }}</a></caption>
+      <table class="table">
         <thead>
           <th scope="col">Clip</th>
           <th scope="col">Views</thj>
@@ -69,7 +95,7 @@
         </tbody>
       </table>
       <nav v-if="page_nums.length > 1" aria-label="Clip page navigation">
-        <ul class="pagination">
+        <ul class="pagination justify-content-center">
           <li class="page-item"><a v-on:click.prevent="if (current_page > 1) { current_page--; }" v-bind:class="pagination_prev_class" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
           <li v-for="num in page_nums" class="page-item"><a v-on:click.prevent="current_page = num" v-bind:class="{ 'page-link': true, active: num === current_page }" href="#">{{ num }}</a></li>
           <li class="page-item"><a v-on:click.prevent="if (current_page < page_nums.length) { current_page++; }" v-bind:class="pagination_next_class" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
