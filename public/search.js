@@ -19,6 +19,8 @@ createApp({
       views_max: null,
       filter_category: "any",
       filter_clipper: "any",
+      sort_by: null,
+      sort_dir: null,
     }
   },
   computed: {
@@ -38,7 +40,38 @@ createApp({
         filtered = filtered.filter(clip => (min === null || clip.view_count >= min) && (max === null || clip.view_count <= max));
       }
       if (this.title_search !== null && this.title_search !== "") {
-        filtered = filtered.filter(clip => clip.title.toLowerCase().includes(this.title_search.toLowerCase()));
+        filtered = filtered.filter(clip => (clip.title || '').toLowerCase().includes(this.title_search.toLowerCase()));
+      }
+      if (this.sort_by === 'title') {
+        if (this.sort_dir === 'desc') {
+          filtered.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
+        } else {
+          filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+        }
+      } else if (this.sort_by === 'views') {
+        if (this.sort_dir === 'desc') {
+          filtered.sort((a, b) => (b.view_count || 0) - (a.view_count || 0));
+        } else {
+          filtered.sort((a, b) => (a.view_count || 0) - (b.view_count || 0));
+        }
+      } else if (this.sort_by === 'category') {
+        if (this.sort_dir === 'desc') {
+          filtered.sort((a, b) => (b.game || '').localeCompare(a.game || ''));
+        } else {
+          filtered.sort((a, b) => (a.game || '').localeCompare(b.game || ''));
+        }
+      } else if (this.sort_by === 'clipper') {
+        if (this.sort_dir === 'desc') {
+          filtered.sort((a, b) => (b.creator_name || '').localeCompare(a.creator_name || ''));
+        } else {
+          filtered.sort((a, b) => (a.creator_name || '').localeCompare(b.creator_name || ''));
+        }
+      } else if (this.sort_by === 'date') {
+        if (this.sort_dir === 'desc') {
+          filtered.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+        } else {
+          filtered.sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+        }
       }
       return filtered;
     },
@@ -86,6 +119,14 @@ createApp({
     },
   },
   methods: {
+    set_sort_by(sort_key) {
+      if (sort_key === this.sort_by) {
+        this.sort_dir = this.sort_dir === 'desc' ? 'asc' : 'desc';
+      } else {
+        this.sort_by = sort_key;
+        this.sort_dir = null;
+      }
+    },
     fetch_clips() {
       this.search_error = null;
       let url_params = new URLSearchParams();
@@ -136,6 +177,8 @@ createApp({
       this.views_max = null;
       this.filter_category = "any";
       this.filter_clipper = "any";
+      this.sort_by = null;
+      this.sort_dir = null;
       this.clips = clips;
     },
   }

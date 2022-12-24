@@ -78,11 +78,11 @@
       </nav>
       <table class="table">
         <thead>
-          <th scope="col">Clip</th>
-          <th scope="col">Views</thj>
-          <th scope="col">Category</th>
-          <th scope="col">Clipper</th>
-          <th scope="col">Date</th>
+          <th scope="col"><a v-on:click.prevent="set_sort_by('title')" href="#">Clip</a><span v-if="sort_by === 'title'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
+          <th scope="col"><a v-on:click.prevent="set_sort_by('views')" href="#">Views</a><span v-if="sort_by === 'views'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
+          <th scope="col"><a v-on:click.prevent="set_sort_by('category')" href="#">Category</a><span v-if="sort_by === 'category'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
+          <th scope="col"><a v-on:click.prevent="set_sort_by('clipper')" href="#">Clipper</a><span v-if="sort_by === 'clipper'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
+          <th scope="col"><a v-on:click.prevent="set_sort_by('date')" href="#">Date</a><span v-if="sort_by === 'date'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
         </thead>
         <tbody>
           <tr v-for="clip in clips_page">
