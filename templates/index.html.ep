@@ -84,9 +84,11 @@
       </form>
       <nav v-if="page_nums.length > 1" aria-label="Clip page navigation">
         <ul class="pagination pagination-sm justify-content-center">
-          <li class="page-item"><a v-on:click.prevent="if (current_page > 1) { current_page--; }" v-bind:class="pagination_prev_class" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+          <li class="page-item"><a v-on:click.prevent="current_page = 1" v-bind:class="pagination_prev_class" href="#" aria-label="First"><span aria-hidden="true">⟪</span></a></li>
+          <li class="page-item"><a v-on:click.prevent="if (current_page > 1) { current_page--; }" v-bind:class="pagination_prev_class" href="#" aria-label="Previous"><span aria-hidden="true">⟨</span></a></li>
           <li v-for="num in page_nums" class="page-item"><a v-on:click.prevent="current_page = num" v-bind:class="{ 'page-link': true, active: num === current_page }" href="#">{{ num }}</a></li>
-          <li class="page-item"><a v-on:click.prevent="if (current_page < page_nums[page_nums.length - 1]) { current_page++; }" v-bind:class="pagination_next_class" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+          <li class="page-item"><a v-on:click.prevent="if (current_page < last_page) { current_page++; }" v-bind:class="pagination_next_class" href="#" aria-label="Next"><span aria-hidden="true">⟩</span></a></li>
+          <li class="page-item"><a v-on:click.prevent="current_page = last_page" v-bind:class="pagination_next_class" href="#" aria-label="Last"><span aria-hidden="true">⟫</span></a></li>
         </ul>
       </nav>
       <table class="table">
@@ -111,9 +113,11 @@
       </table>
       <nav v-if="page_nums.length > 1" aria-label="Clip page navigation">
         <ul class="pagination pagination-sm justify-content-center">
-          <li class="page-item"><a v-on:click.prevent="if (current_page > 1) { current_page--; }" v-bind:class="pagination_prev_class" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+          <li class="page-item"><a v-on:click.prevent="current_page = 1" v-bind:class="pagination_prev_class" href="#" aria-label="First"><span aria-hidden="true">⟪</span></a></li>
+          <li class="page-item"><a v-on:click.prevent="if (current_page > 1) { current_page--; }" v-bind:class="pagination_prev_class" href="#" aria-label="Previous"><span aria-hidden="true">⟨</span></a></li>
           <li v-for="num in page_nums" class="page-item"><a v-on:click.prevent="current_page = num" v-bind:class="{ 'page-link': true, active: num === current_page }" href="#">{{ num }}</a></li>
-          <li class="page-item"><a v-on:click.prevent="if (current_page < page_nums[page_nums.length - 1]) { current_page++; }" v-bind:class="pagination_next_class" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+          <li class="page-item"><a v-on:click.prevent="if (current_page < last_page) { current_page++; }" v-bind:class="pagination_next_class" href="#" aria-label="Next"><span aria-hidden="true">⟩</span></a></li>
+          <li class="page-item"><a v-on:click.prevent="current_page = last_page" v-bind:class="pagination_next_class" href="#" aria-label="Last"><span aria-hidden="true">⟫</span></a></li>
         </ul>
       </nav>
     </template>

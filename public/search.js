@@ -104,18 +104,20 @@ createApp({
       this.clips.forEach((clip) => { let id = clip.creator_id === null ? '' : clip.creator_id; clippers[id] = clip.creator_name === null ? '' : clip.creator_name; });
       return Object.keys(clippers).map((creator_id) => ({ id: creator_id, name: clippers[creator_id] })).sort((a, b) => a.name.localeCompare(b.name));
     },
+    last_page() {
+      if (this.clips === null || this.clips_filtered.length < 1) { return 1; }
+      return Math.floor((this.clips_filtered.length - 1) / this.page_size) + 1;
+    },
     page_nums() {
       if (this.clips === null || this.clips_filtered.length < 1) { return []; }
       let last_page = Math.floor((this.clips_filtered.length - 1) / this.page_size) + 1;
       let pages = [];
-      let page = this.current_page < 5 ? 1 : this.current_page > last_page - 5 ? last_page - 9 : this.current_page - 5;
+      let page = this.current_page < 5 ? 1 : this.current_page > this.last_page - 5 ? this.last_page - 9 : this.current_page - 5;
       if (page < 1) { page = 1; }
-      while ((page < this.current_page + 5 || pages.length < 10) && page <= last_page) {
+      while ((page < this.current_page + 5 || pages.length < 10) && page <= this.last_page) {
         pages.push(page);
         page++;
       }
-      if (pages[0] !== 1) { pages.unshift(1); }
-      if (pages[pages.length - 1] !== last_page) { pages.push(last_page); }
       return pages;
     },
     pagination_prev_class() {
@@ -127,7 +129,7 @@ createApp({
     pagination_next_class() {
       return {
         'page-link': true,
-        disabled: this.current_page >= this.page_nums[this.page_nums.length - 1],
+        disabled: this.current_page >= this.last_page,
       }
     },
   },
