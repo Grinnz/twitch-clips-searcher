@@ -53,42 +53,49 @@ createApp({
     },
     clips_filtered_and_sorted() {
       let filtered = this.clips_filtered;
-      if (this.sort_by === 'title') {
-        if (this.sort_dir === 'desc') {
-          filtered.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
-        } else {
-          filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-        }
-      } else if (this.sort_by === 'duration') {
-        if (this.sort_dir === 'desc') {
-          filtered.sort((a, b) => (b.duration || 0) - (a.duration || 0));
-        } else {
-          filtered.sort((a, b) => (a.duration || 0) - (b.duration || 0));
-        }
-      } else if (this.sort_by === 'views') {
-        if (this.sort_dir === 'desc') {
-          filtered.sort((a, b) => (b.view_count || 0) - (a.view_count || 0));
-        } else {
-          filtered.sort((a, b) => (a.view_count || 0) - (b.view_count || 0));
-        }
-      } else if (this.sort_by === 'category') {
-        if (this.sort_dir === 'desc') {
-          filtered.sort((a, b) => (b.game || '').localeCompare(a.game || ''));
-        } else {
-          filtered.sort((a, b) => (a.game || '').localeCompare(b.game || ''));
-        }
-      } else if (this.sort_by === 'clipper') {
-        if (this.sort_dir === 'desc') {
-          filtered.sort((a, b) => (b.creator_name || '').localeCompare(a.creator_name || ''));
-        } else {
-          filtered.sort((a, b) => (a.creator_name || '').localeCompare(b.creator_name || ''));
-        }
-      } else if (this.sort_by === 'date') {
-        if (this.sort_dir === 'desc') {
-          filtered.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-        } else {
-          filtered.sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
-        }
+      switch (this.sort_by) {
+        case 'title':
+          if (this.sort_dir === 'desc') {
+            filtered.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
+          } else {
+            filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+          }
+          break;
+        case 'duration':
+          if (this.sort_dir === 'desc') {
+            filtered.sort((a, b) => (b.duration || 0) - (a.duration || 0));
+          } else {
+            filtered.sort((a, b) => (a.duration || 0) - (b.duration || 0));
+          }
+          break;
+        case 'views':
+          if (this.sort_dir === 'desc') {
+            filtered.sort((a, b) => (b.view_count || 0) - (a.view_count || 0));
+          } else {
+            filtered.sort((a, b) => (a.view_count || 0) - (b.view_count || 0));
+          }
+          break;
+        case 'category':
+          if (this.sort_dir === 'desc') {
+            filtered.sort((a, b) => (b.game || '').localeCompare(a.game || ''));
+          } else {
+            filtered.sort((a, b) => (a.game || '').localeCompare(b.game || ''));
+          }
+          break;
+        case 'clipper':
+          if (this.sort_dir === 'desc') {
+            filtered.sort((a, b) => (b.creator_name || '').localeCompare(a.creator_name || ''));
+          } else {
+            filtered.sort((a, b) => (a.creator_name || '').localeCompare(b.creator_name || ''));
+          }
+          break;
+        case 'date':
+          if (this.sort_dir === 'desc') {
+            filtered.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+          } else {
+            filtered.sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+          }
+          break;
       }
       return filtered;
     },
