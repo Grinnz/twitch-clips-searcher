@@ -49,6 +49,10 @@ createApp({
       if (this.title_search !== null && this.title_search !== "") {
         filtered = filtered.filter(clip => (clip.title || '').toLowerCase().includes(this.title_search.toLowerCase()));
       }
+      return filtered;
+    },
+    clips_filtered_and_sorted() {
+      let filtered = this.clips_filtered;
       if (this.sort_by === 'title') {
         if (this.sort_dir === 'desc') {
           filtered.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
@@ -90,7 +94,7 @@ createApp({
     },
     clips_page() {
       if (this.clips === null) { return []; }
-      return this.clips_filtered.slice((this.current_page - 1) * this.page_size, this.current_page * this.page_size);
+      return this.clips_filtered_and_sorted.slice((this.current_page - 1) * this.page_size, this.current_page * this.page_size);
     },
     clip_categories() {
       if (this.clips === null) { return []; }
