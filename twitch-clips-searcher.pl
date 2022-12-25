@@ -2,7 +2,6 @@
 
 use 5.020;
 use Mojolicious::Lite -signatures;
-use List::Util 1.45 'uniqstr';
 use Mojo::Promise;
 use Mojo::URL;
 use Mojo::UserAgent;
