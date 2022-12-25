@@ -49,6 +49,14 @@
           <input v-model="title_search" type="text" id="filter-title" class="form-control" placeholder="Search Titles" name="title_search">
         </div>
         <div class="col-12">
+          <label class="visually-hidden" for="filter-duration-min">Min Seconds</label>
+          <input v-model="duration_min" type="number" min="0" max="60" id="filter-duration-min" class="form-control" placeholder="Min (s)" name="duration_min">
+        </div>
+        <div class="col-12">
+          <label class="visually-hidden" for="filter-duration-max">Max Seconds</label>
+          <input v-model="duration_max" type="number" min="0" max="60" id="filter-duration-max" class="form-control" placeholder="Max (s)" name="duration_max">
+        </div>
+        <div class="col-12">
           <label class="visually-hidden" for="filter-views-min">Min Views</label>
           <input v-model="views_min" type="number" id="filter-views-min" class="form-control" placeholder="Min Views" name="views_min">
         </div>
@@ -79,6 +87,7 @@
       <table class="table">
         <thead>
           <th scope="col"><a v-on:click.prevent="set_sort_by('title')" href="#">Clip</a><span v-if="sort_by === 'title'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
+          <th scope="col"><a v-on:click.prevent="set_sort_by('duration')" href="#">Duration</a><span v-if="sort_by === 'duration'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
           <th scope="col"><a v-on:click.prevent="set_sort_by('views')" href="#">Views</a><span v-if="sort_by === 'views'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
           <th scope="col"><a v-on:click.prevent="set_sort_by('category')" href="#">Category</a><span v-if="sort_by === 'category'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
           <th scope="col"><a v-on:click.prevent="set_sort_by('clipper')" href="#">Clipper</a><span v-if="sort_by === 'clipper'"> {{ sort_dir === 'desc' ? '▼' : '▲' }}</span></th>
@@ -87,6 +96,7 @@
         <tbody>
           <tr v-for="clip in clips_page">
             <td><a target="_blank" v-bind:href="clip.url">{{ clip.title }}<br><img height=180 v-bind:src="clip.thumbnail_url"></a></td>
+            <td>{{ clip.duration }}s</td>
             <td>{{ clip.view_count }}</td>
             <td><a target="_blank" v-bind:href="'https://www.twitch.tv/directory/game/' + encodeURIComponent(clip.game)">{{ clip.game }}</a></td>
             <td><a target="_blank" v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clip.creator_name)">{{ clip.creator_name }}</a></td>

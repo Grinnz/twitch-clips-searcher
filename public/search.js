@@ -15,6 +15,8 @@ createApp({
       current_page: 1,
       clips_user: null,
       title_search: null,
+      duration_min: null,
+      duration_max: null,
       views_min: null,
       views_max: null,
       filter_category: "any",
@@ -39,6 +41,11 @@ createApp({
         let max = this.views_max === "" ? null : this.views_max;
         filtered = filtered.filter(clip => (min === null || clip.view_count >= min) && (max === null || clip.view_count <= max));
       }
+      if ((this.duration_min !== null && this.duration_min !== "") || (this.duration_max !== null && this.duration_max !== "")) {
+        let min = this.duration_min === "" ? null : this.duration_min;
+        let max = this.duration_max === "" ? null : this.duration_max;
+        filtered = filtered.filter(clip => (min === null || clip.duration >= min) && (max === null || clip.duration <= max));
+      }
       if (this.title_search !== null && this.title_search !== "") {
         filtered = filtered.filter(clip => (clip.title || '').toLowerCase().includes(this.title_search.toLowerCase()));
       }
@@ -47,6 +54,12 @@ createApp({
           filtered.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
         } else {
           filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+        }
+      } else if (this.sort_by === 'duration') {
+        if (this.sort_dir === 'desc') {
+          filtered.sort((a, b) => (b.duration || 0) - (a.duration || 0));
+        } else {
+          filtered.sort((a, b) => (a.duration || 0) - (b.duration || 0));
         }
       } else if (this.sort_by === 'views') {
         if (this.sort_dir === 'desc') {
@@ -173,6 +186,8 @@ createApp({
     populate_clips(clips) {
       this.current_page = 1;
       this.title_search = null;
+      this.duration_min = null;
+      this.duration_max = null;
       this.views_min = null;
       this.views_max = null;
       this.filter_category = "any";
