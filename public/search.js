@@ -110,7 +110,6 @@ createApp({
     },
     page_nums() {
       if (this.clips === null || this.clips_filtered.length < 1) { return []; }
-      let last_page = Math.floor((this.clips_filtered.length - 1) / this.page_size) + 1;
       let pages = [];
       let page = this.current_page < 5 ? 1 : this.current_page > this.last_page - 5 ? this.last_page - 9 : this.current_page - 5;
       if (page < 1) { page = 1; }
