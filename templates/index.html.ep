@@ -115,8 +115,8 @@
             </td>
             <td>{{ clip.duration }}s</td>
             <td>{{ clip.view_count }}</td>
-            <td><a target="_blank" v-bind:href="'https://www.twitch.tv/directory/game/' + encodeURIComponent(clip.game)">{{ clip.game }}</a></td>
-            <td><a target="_blank" v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clip.creator_name)">{{ clip.creator_name }}</a></td>
+            <td><a v-on:click.prevent="filter_category = clip.game_id" href="#">{{ clip.game }}</a></td>
+            <td><a v-on:click.prevent="filter_clipper = clip.creator_id" href="#">{{ clip.creator_name }}</a></td>
             <td>{{ new Date(clip.created_at).toLocaleString() }}</td>
           </tr>
         </tbody>
