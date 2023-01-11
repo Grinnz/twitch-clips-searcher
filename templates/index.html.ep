@@ -102,7 +102,17 @@
         </thead>
         <tbody>
           <tr v-for="clip in clips_page">
-            <td><a target="_blank" v-bind:href="clip.url">{{ clip.title }}<br><img height=180 v-bind:src="clip.thumbnail_url"></a></td>
+            <td>
+              <form v-on:submit.prevent class="row row-cols-sm-auto align-items-center mb-2">
+                <div class="col-12">
+                  <input v-model="clip.show_embed" class="btn-check" type="checkbox" v-bind:id="show_embed_btn_id(clip)" autocomplete="off">
+                  <label class="btn btn-outline-primary btn-sm" v-bind:for="show_embed_btn_id(clip)">Embed</label>
+                </div>
+                <a target="_blank" v-bind:href="clip.url">{{ clip.title }}</a>
+              </form>
+              <iframe v-if="clip.show_embed" v-bind:src="clip_embed_url(clip)" height=306 width=544 preload="metadata" allowfullscreen></iframe>
+              <a v-else target="_blank" v-bind:href="clip.url"><img height=180 v-bind:src="clip.thumbnail_url"></a>
+            </td>
             <td>{{ clip.duration }}s</td>
             <td>{{ clip.view_count }}</td>
             <td><a target="_blank" v-bind:href="'https://www.twitch.tv/directory/game/' + encodeURIComponent(clip.game)">{{ clip.game }}</a></td>

@@ -195,8 +195,20 @@ createApp({
           console.log(error);
         }).finally(() => { this.fetching_clips = false; });
     },
+    clip_embed_url(clip) {
+      if (clip.embed_url === null) { return null; }
+      let embed_url = new URL(clip.embed_url);
+      let embed_params = new URLSearchParams(embed_url.searchParams);
+      embed_params.set('parent', window.location.hostname);
+      embed_url.search = embed_params.toString();
+      return embed_url.toString();
+    },
+    show_embed_btn_id(clip) {
+      return 'show-embed-btn-' + clip.id;
+    },
     populate_clips(clips) {
       this.current_page = 1;
+      this.page_size = 100;
       this.title_search = null;
       this.duration_min = null;
       this.duration_max = null;
