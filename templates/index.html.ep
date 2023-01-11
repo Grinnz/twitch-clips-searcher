@@ -48,7 +48,10 @@
     </form>
     <template v-if="clips">
       <p>Showing {{ clips_filtered.length }} of {{ clips.length }} clips fetched for <a target="_blank" v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clips_user)">{{ clips_user }}</a></p>
-      <form v-on:submit.prevent class="row row-cols-lg-auto g-3 align-items-center mb-3">
+      <form v-on:submit.prevent v-on:reset="clear_filters" class="row row-cols-lg-auto g-3 align-items-center mb-3">
+        <div class="col-12">
+          <button type="reset" class="btn btn-danger">Clear Filters</button>
+        </div>
         <div class="col-12">
           <label class="visually-hidden" for="filter-title">Title</label>
           <input v-model="title_search" type="text" id="filter-title" class="form-control" placeholder="Search Titles" name="title_search">

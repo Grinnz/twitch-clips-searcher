@@ -209,6 +209,12 @@ createApp({
     populate_clips(clips) {
       this.current_page = 1;
       this.page_size = 100;
+      this.clear_filters();
+      this.sort_by = null;
+      this.sort_dir = null;
+      this.clips = clips;
+    },
+    clear_filters() {
       this.title_search = null;
       this.duration_min = null;
       this.duration_max = null;
@@ -216,9 +222,6 @@ createApp({
       this.views_max = null;
       this.filter_category = "any";
       this.filter_clipper = "any";
-      this.sort_by = null;
-      this.sort_dir = null;
-      this.clips = clips;
     },
   }
 }).mount('#app');
