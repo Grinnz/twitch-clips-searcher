@@ -14,6 +14,9 @@
     </div>
   </nav>
   <div id="app" class="container-fluid">
+    <p>Enter the username of a Twitch streamer to fetch their clips, and optionally enter a date range of clips to fetch.</p>
+    <p>For streamers with a lot of clips, it may take a long time or time-out fetching clips without a date range.</p>
+    <p>After fetching clips, they can be searched, sorted, and filtered further.</p>
     <form v-on:submit.prevent="fetch_clips" class="row row-cols-sm-auto g-3 align-items-center mb-3">
       <div class="col-12">
         <label class="visually-hidden" for="search-username">Username</label>
