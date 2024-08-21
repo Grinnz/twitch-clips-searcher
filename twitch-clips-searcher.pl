@@ -2,6 +2,9 @@
 
 use 5.020;
 use Mojolicious::Lite -signatures;
+use Mojo::File 'tempfile';
+use Mojo::IOLoop;
+use Mojo::JSON 'encode_json';
 use Mojo::Promise;
 use Mojo::URL;
 use Mojo::UserAgent;
@@ -134,12 +137,21 @@ get '/api/clips/:username' => {username => ''} => sub ($c) {
   my $ended_at = length $end_ts ? Time::Moment->from_epoch($end_ts)->to_string : undef;
   $started_at = Time::Moment->from_epoch(0)->to_string if defined $ended_at and !defined $started_at;
   $ended_at = Time::Moment->now_utc->to_string if defined $started_at and !defined $ended_at;
+  my $tempfile = tempfile;
   $c->get_users_by_name([$username])->then(sub ($users) {
     my $user = $users->{lc $username} // die "User not found\n";
-    $c->get_user_clips($user->{id}, $started_at, $ended_at)->then(sub ($clips) {
-      return $c->render(json => {username => $user->{display_name}, clips => $clips});
+    Mojo::IOLoop->subprocess->run_p(sub {
+      # retrieve and encode the clip list in the subprocess only to avoid extra worker memory bloat
+      $c->get_user_clips($user->{id}, $started_at, $ended_at)->then(sub ($clips) {
+        $tempfile->spew(encode_json {username => $user->{display_name}, clips => $clips});
+      })->wait;
+      return; # avoid serializing return values
     });
+  })->then(sub {
+    $c->res->headers->content_type($c->app->types->type('json'));
+    $c->reply->file("$tempfile");
   })->catch(sub ($error) {
+    undef $tempfile;
     chomp $error;
     $c->render(status => 500, json => {error => $error});
   });
