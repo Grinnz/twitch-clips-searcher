@@ -50,6 +50,7 @@
         <span class="form-text">{{ search_error }}</span>
       </div>
     </form>
+    <a id="clips-top">
     <template v-if="clips">
       <p>Showing {{ clips_filtered.length }} of {{ clips.length }} clips fetched for <a target="_blank" v-bind:href="'https://www.twitch.tv/' + encodeURIComponent(clips_user)">{{ clips_user }}</a></p>
       <form v-on:submit.prevent v-on:reset="clear_filters" class="row row-cols-sm-auto g-3 align-items-center mb-3">

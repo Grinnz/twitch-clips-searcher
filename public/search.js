@@ -25,6 +25,11 @@ createApp({
       sort_dir: null,
     }
   },
+  watch: {
+    current_page(old_page, new_page) {
+      document.getElementById('clips-top').scrollIntoView();
+    },
+  },
   computed: {
     clips_filtered() {
       this.current_page = 1;
