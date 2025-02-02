@@ -70,8 +70,8 @@ my %games_by_id;
 helper get_user_clips => sub ($c, $broadcaster_id, $started_at = undef, $ended_at = undef, $cursor = undef) {
   my %params = (broadcaster_id => $broadcaster_id, first => 100);
   $params{after} = $cursor if defined $cursor;
-  $params{started_at} = $started_at if defined $started_at;
-  $params{ended_at} = $ended_at if defined $ended_at;
+  $params{started_at} = $started_at->to_string if defined $started_at;
+  $params{ended_at} = $ended_at->to_string if defined $ended_at;
   $c->api_request(GET => 'clips', \%params)->then(sub ($response) {
     my %games_to_fetch;
     foreach my $clip (@{$response->{data} // []}) {
@@ -132,11 +132,11 @@ get '/api/clips/:username' => {username => ''} => sub ($c) {
   return $c->render(status => 400, json => {error => 'No user specified'}) unless length $username;
   return $c->render(status => 400, json => {error => 'Invalid username'}) unless $username =~ m/\A[a-zA-Z0-9][a-zA-Z0-9_]*\z/;
   my $start_ts = $c->req->param('start_ts');
-  my $started_at = length $start_ts ? Time::Moment->from_epoch($start_ts)->to_string : undef;
+  my $started_at = length $start_ts ? Time::Moment->from_epoch($start_ts) : undef;
   my $end_ts = $c->req->param('end_ts');
-  my $ended_at = length $end_ts ? Time::Moment->from_epoch($end_ts)->to_string : undef;
-  $started_at = Time::Moment->from_epoch(0)->to_string if defined $ended_at and !defined $started_at;
-  $ended_at = Time::Moment->now_utc->to_string if defined $started_at and !defined $ended_at;
+  my $ended_at = length $end_ts ? Time::Moment->from_epoch($end_ts) : undef;
+  $started_at //= Time::Moment->from_epoch(0) if defined $ended_at;
+  $ended_at //= Time::Moment->now_utc if defined $started_at;
   my $tempfile = tempfile;
   $c->get_users_by_name([$username])->then(sub ($users) {
     my $user = $users->{lc $username} // die "User not found\n";
